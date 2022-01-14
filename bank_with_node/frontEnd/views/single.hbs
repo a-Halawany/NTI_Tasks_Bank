@@ -1,0 +1,58 @@
+{{>header}}
+{{>navbar}}
+<div class="container">
+    <div class="my-3 text-center">
+        <h3>User Information</h3>
+    </div >
+    <div class="my-4 row text-center">
+        <div class='col-6'>Acc Number : <span class='fw-bold text-success'>{{data.id}}</span></div>
+        <div class='col-6'>Inital Balance : <span class='fw-bold text-success'>{{data.initalBalance}}</span></div>
+        <div class='col-6'>Name : <span class='fw-bold text-success'>{{data.name}}</span></div>
+        <div class='col-6'>Phone Number : <span class='fw-bold text-success'>{{data.phone}}</span></div>
+        <div class='col-6'>Address : <span class='fw-bold text-success'>{{data.Address}}</span></div>
+        <div class='col-6'>Transactions : <span class='fw-bold text-success'>{{data.transactions.length}}</span></div>
+    </div>
+    <div class="my-4">
+    <table class='table table-bordered text-center'>
+        <thead>
+            <tr>
+                <th>Acc Number</th>
+                <th>Transaction Number</th>
+                <th>Transaction Type</th>
+                <th>Value</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#if noTrans}}
+            <tr class='alert alert-danger'>
+                <td colspan="5">No Transactions Yet</td>
+            </tr>
+            {{/if}}
+            {{#each data.transactions}}
+            <tr >
+                <td>{{../data.id}}</td>
+                <td>{{tranNum}}</td>
+                <td>{{type}}</td>
+                <td>{{value}}</td>
+                <td >
+                <a href="/editTrans/{{../data.id}}/{{tranNum}}" class='btn btn-outline-success mx-1'>Edit</a>
+                <a href="/deleteTrans/{{../data.id}}/{{tranNum}}" class='btn btn-outline-danger mx-1'>Delete</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+        {{#if noTrans}}
+        {{else}}
+        <tfoot>
+            <tr class='fw-bold'>
+                <td colspan="3">Current Balance  </td>
+                <td>{{sum}}</td>
+                <td> <a href="/deleteTransactions/{{data.id}}" class='btn btn-danger'>Delete All</a> </td>
+            </tr>
+        </tfoot>
+        {{/if}}
+    </table>
+</div>
+</div>
+{{>footer}}

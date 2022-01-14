@@ -1,0 +1,51 @@
+{{>header}}
+{{>navbar}}
+<div class="container">
+<div class="d-flex justify-content-end my-3">
+    <a href='/addUser' class="btn btn-primary">Add new user</a>
+</div>
+<table class='table table-bordered text-center'>
+    <thead>
+        <tr>
+            <th>Account num</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone</th>
+            <th>intial Balance</th>
+            <th>Transactions</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#if noData}}
+        <tr class="alert alert-danger text-center">
+            <td colspan="7" >No users yet</td>
+        </tr>
+        {{else}}
+        {{#each data}}
+        <tr>
+            <td>{{id}}</td>
+            <td>{{name}}</td>
+            <td>{{Address}}</td>
+            <td>{{phone}}</td>
+            <td>{{initalBalance}}</td>
+            <td>{{transactions.length}}</td>
+            <td>
+                <a href="/add-withdraw/{{this.id}}" class='btn btn-outline-info m-1'>add/withDraw</a>
+                <a href="/user/{{this.id}}" class='btn btn-outline-success m-1'>Show</a>
+                <a href="/edit/{{this.id}}" class='btn btn-outline-success m-1'>Edit</a>
+                <a href="/delete/{{this.id}}" class='btn btn-outline-danger m-1'>Delete</a>
+            </td>
+        </tr>
+        {{/each}}
+        {{/if}}
+        {{!-- <tr>
+            <td>5000</td>
+            <td>Ahmad Halawany</td>
+            <td>eahmad96@icloud.com</td>
+            <td>500</td>
+        </tr> --}}
+    </tbody>
+</table>
+</div>
+{{>footer}}
