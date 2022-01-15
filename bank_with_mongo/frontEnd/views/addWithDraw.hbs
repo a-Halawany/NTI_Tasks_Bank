@@ -1,0 +1,24 @@
+{{>header}}
+{{>navbar}}
+<div class="container ">
+    <div class="my-4 text-center">
+        <h3>Add new Transaction</h3>
+    </div>
+    <form method="post">
+        <div class="my-3">
+            <div> Selet Transaction Type : </div>
+            <input type="radio" name="type" id="add" value='add'>
+            <label for='add'>add</label>
+            <input type="radio" name="type" id="withDraw" value='withDraw'>
+            <label for='withDraw'>withDraw</label>
+        </div>
+        <div class="my-3 ">
+            <label>Enater the value : </label>
+            <input type="number" name="value" class='form-control w-50'>
+        </div>
+        <div class="my-3">
+            <input class='btn btn-outline-dark' type="submit" value="add transaction">
+        </div>
+    </form>
+</div>
+{{>footer}}

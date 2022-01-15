@@ -1,0 +1,37 @@
+{{>header}}
+{{>navbar}}
+<div class="container">
+    <h3 class='text-center my-3'>Add New User</h3>
+    <form method="post">
+        <div class="my-3">
+            <label >name : </label>
+            <input class='form-control {{#if errors.name}}border-danger{{/if}}' type="text" name='name' placeholder="Enter Your name" value='{{userData.name}}'>
+            {{#if errors.name}}
+            <p class="mx-3 text-danger">{{errors.name}}</p>
+            {{/if}}
+        </div>
+        <div class="my-3">
+            <label > Address : </label>
+            <input class='form-control {{#if errors.Address}}border-danger{{/if}}' type="text" name='Address' placeholder="Enter Your Address" value='{{userData.Address}}'>
+            {{#if errors.Address}}
+            <p class="mx-3 text-danger">{{errors.Address}}</p>
+            {{/if}}
+        </div>
+        <div class="my-3">
+            <label >Phone : </label>
+            <input class='form-control {{#if errors.phone}}border-danger{{/if}}' type="text" name='phone' placeholder="Enter Your Phone" value='{{userData.phone}}'>
+            {{#if errors.phone}}
+            <p class="mx-3 text-danger">{{errors.phone}}</p>
+            {{/if}}
+        </div>
+        <div class="my-3">
+            <label >Inital Balance : </label>
+            <input class='form-control {{#if errors.initalBalance}}border-danger{{/if}}' type="text" name='initalBalance' placeholder="Enter the Inital Balance" value='{{userData.initalBalance}}'>
+            {{#if errors.initalBalance}}
+            <p class="mx-3 text-danger">{{errors.initalBalance}}</p>
+            {{/if}}
+        </div>
+        <input type="submit" value="Add User" class='btn btn-primary'>
+    </form>
+</div>
+{{>footer}}

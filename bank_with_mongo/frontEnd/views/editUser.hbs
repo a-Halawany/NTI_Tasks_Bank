@@ -1,0 +1,34 @@
+{{>header}}
+{{>navbar}}
+<div class="container">
+    <h3 class='text-center my-3'>Edit User</h3>
+    <form method="post">
+        <div class="my-3">
+            <label >name : </label>
+            <input class='form-control ' type="text" name='name' value='{{#if errors.name}}{{userData.name}}{{else}}{{data.name}}{{/if}}' placeholder="Enter Your name">
+            {{#if errors.name}}
+            <p class="mx-3 text-danger">{{errors.name}}</p>
+            {{/if}}
+        </div>
+        <div class="my-3">
+            <label > Address : </label>
+            <input class='form-control ' type="text" name='Address' value='{{#if errors.Address}}{{userData.Address}}{{else}}{{data.Address}}{{/if}}' placeholder="Enter Your Address">
+            {{#if errors.Address}}
+            <p class="mx-3 text-danger">{{errors.Address}}</p>
+            {{/if}}
+        </div>
+        <div class="my-3">
+            <label >Phone : </label>
+            <input class='form-control ' type="text" name='phone' value='{{#if errors.phone}}{{userData.phone}}{{else}}{{data.phone}}{{/if}}' placeholder="Enter Your Phone">
+            {{#if errors.phone}}
+            <p class="mx-3 text-danger">{{errors.phone}}</p>
+            {{/if}}
+        </div>
+        <div class="my-3">
+            <label >Inital Balance : </label>
+            <lable class='form-control'>{{data.initalBalance}}</lable>
+        </div>
+        <input type="submit" value="Edit User" class='btn btn-primary'>
+    </form>
+</div>
+{{>footer}}
