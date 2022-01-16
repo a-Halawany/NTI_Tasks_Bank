@@ -2,7 +2,7 @@
 {{>navbar}}
 <div class="container ">
     <div class="my-4 text-center">
-        <h3>Edit Transaction #Number</h3>
+        <h3>Edit Transaction #{{transaction.tranNum}}</h3>
     </div>
     <form method="post">
         <div class="my-3">
@@ -14,8 +14,15 @@
         </div>
         <div class="my-3 ">
             <label>Enater the value : </label>
-            <input type="number" name="value" class='form-control w-50' value='{{transaction.value}}'>
+            <input type="number" name="value" class='form-control w-50' value='{{#if errors.trns.val}}{{errors.trns.val}}{{else}}{{transaction.value}}{{/if}}'>
         </div>
+        {{#if errors.trns.err}}
+        <div>
+            <p class="text-danger">
+                {{errors.trns.err}}
+            </p>
+        </div>
+        {{/if}}
         <div class="my-3">
             <input class='btn btn-outline-dark' type="submit" value="add transaction">
         </div>

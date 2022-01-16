@@ -5,21 +5,21 @@
     <form method="post">
         <div class="my-3">
             <label >name : </label>
-            <input class='form-control ' type="text" name='name' value='{{#if errors.name}}{{userData.name}}{{else}}{{data.name}}{{/if}}' placeholder="Enter Your name">
+            <input class='form-control ' type="text" name='name' value='{{#if userData.name}}{{userData.name}}{{else}}{{data.name}}{{/if}}' placeholder="Enter Your name">
             {{#if errors.name}}
             <p class="mx-3 text-danger">{{errors.name}}</p>
             {{/if}}
         </div>
         <div class="my-3">
             <label > Address : </label>
-            <input class='form-control ' type="text" name='Address' value='{{#if errors.Address}}{{userData.Address}}{{else}}{{data.Address}}{{/if}}' placeholder="Enter Your Address">
+            <input class='form-control ' type="text" name='Address' value='{{#if userData.Address}}{{userData.Address}}{{else}}{{data.Address}}{{/if}}' placeholder="Enter Your Address">
             {{#if errors.Address}}
             <p class="mx-3 text-danger">{{errors.Address}}</p>
             {{/if}}
         </div>
         <div class="my-3">
             <label >Phone : </label>
-            <input class='form-control ' type="text" name='phone' value='{{#if errors.phone}}{{userData.phone}}{{else}}{{data.phone}}{{/if}}' placeholder="Enter Your Phone">
+            <input class='form-control ' type="text" name='phone' value='{{#if userData.phone}}{{userData.phone}}{{else}}{{data.phone}}{{/if}}' placeholder="Enter Your Phone">
             {{#if errors.phone}}
             <p class="mx-3 text-danger">{{errors.phone}}</p>
             {{/if}}

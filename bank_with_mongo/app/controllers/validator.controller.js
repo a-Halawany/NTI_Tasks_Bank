@@ -1,11 +1,13 @@
 const validator = require('validator');
-
+let regex = /^[a-z '-]+$/i
 
 class check {
     static checkName(req) {
         let error = false
+        let name = req.body.name
         try {
-            if (validator.isEmpty(req.body.name)) throw new Error('This field is required')
+            if (validator.isEmpty(name)) throw new Error('This field is required')
+            if (!regex.test(name)) throw new Error(`{ ${name} } is not a valid name`)
         } catch (e) {
             error = e.message
         }

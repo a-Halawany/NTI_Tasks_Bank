@@ -9,12 +9,17 @@
             <div> Selet Transaction Type : </div>
             <input type="radio" name="type" id="add" value='add'{{#if add}} checked{{/if}}>
             <label for='add'>add</label>
-            <input type="radio" name="type" id="withDraw" value='withDraw' {{#if add}}{{else}} checked{{/if}}>
+            <input type="radio" name="type" id="withDraw" value='withDraw' {{#if withdraw}} checked{{/if}}>
             <label for='withDraw'>withDraw</label>
         </div>
         <div class="my-3 ">
             <label>Enater the value : </label>
-            <input type="number" name="value" class='form-control w-50' value='{{transaction.value}}'>
+            <input type="number" name="value" class='form-control w-50 {{#if errors.trns}}border-danger{{/if}}' value='{{transaction}}'>
+            {{#if errors.trns}}
+            <p class="text-danger ms-3">
+                {{errors.trns.err}}
+            </p>
+            {{/if }}
         </div>
         <div class="my-3">
             <input class='btn btn-outline-dark' type="submit" value="Edit transaction">

@@ -1,4 +1,22 @@
 const dbConnection = require("../../db/connection");
+const Check = require('./validator.controller');
+
+const getUserById = (_id) => {
+    return new Promise((resolve, reject) => {
+        dbConnection((err, client, db) => {
+            if (err) reject(err);
+            db.collection('users').findOne({ _id })
+                .then(user => {
+                    client.close()
+                    resolve(user)
+                })
+                .catch(err => reject(err))
+        })
+    })
+}
+
+
+
 class User {
     static getHome(req, res) {
         let noData = true
@@ -32,13 +50,23 @@ class User {
                     return user
                 })
                 .then(user => {
+                    let userData = req.body;
+                    let errors = {}
+                    // Start Validation
+                    if (Check.checkName(req)) errors.name = Check.checkName(req);
+                    if (Check.checkAddress(req)) errors.Address = Check.checkAddress(req)
+                    if (Check.checkPhone(req)) errors.phone = Check.checkPhone(req)
+                    if (Check.checkinitalBalance(req)) errors.initalBalance = Check.checkinitalBalance(req)
+                    // End Validation
+                    if (Object.keys(errors).length != 0)
+                        return res.render('addUser', { pageTitle: 'Add new User', addUser: true, userData, errors })
                     db.collection('users').insertOne(user).then(_ => {
                         res.redirect('/')
                         client.close()
                     })
-                        .catch(err => res.send(err))
+                        .catch(err => res.redirect('/error'))
                 })
-                .catch(err => res.send(err))
+                .catch(err => res.redirect('/error'))
         })
     }
     static getDeleteUser(req, res) {
@@ -50,48 +78,60 @@ class User {
                     client.close()
                     res.redirect('/')
                 })
-                .catch(err => console.log(`err => ${err}`))
+                .catch(err => res.redirect('/error'))
         })
     }
     static getEditUser(req, res) {
         let _id = +req.params.id;
-        dbConnection((err, client, db) => {
-            if (err) res.redirect('/error')
-            db.collection('users').findOne({ _id })
-                .then(data => {
-                    res.render('editUser', { pageTitle: 'Edit User', data })
-                })
-                .catch(err => res.send(err))
-        })
+        getUserById(_id)
+            .then(data => {
+                res.render('editUser', { pageTitle: 'Edit User', data })
+            })
+            .catch(err => res.send(err))
+        // dbConnection((err, client, db) => {
+        //     if (err) res.redirect('/error')
+        //     db.collection('users').findOne({ _id })
+        //         .then(data => {
+        //             res.render('editUser', { pageTitle: 'Edit User', data })
+        //         })
+        //         .catch(err => res.send(err))
+        // })
     }
 
 
     static postEditUser(req, res) {
         let _id = +req.params.id;
-        dbConnection((err, client, db) => {
-            if (err) res.redirect('/error')
-            db.collection('users').updateOne({ _id }, { $set: req.body })
-                .then(_ => {
-                    res.redirect('/')
-                })
-                .catch(err => res.send(err))
+        getUserById(_id).then(data => {
+            dbConnection((err, client, db) => {
+                let errors = {};
+                if (err) res.redirect('/error')
+                let userData = req.body
+                if (Check.checkName(req)) errors.name = Check.checkName(req);
+                if (Check.checkAddress(req)) errors.Address = Check.checkAddress(req)
+                if (Check.checkPhone(req)) errors.phone = Check.checkPhone(req)
+                if (Object.keys(errors).length != 0)
+                    return res.render('editUser', { pageTitle: 'Edit User', errors, userData, data })
+                db.collection('users').updateOne({ _id }, { $set: req.body })
+                    .then(_ => {
+                        res.redirect('/')
+                        client.close()
+                    })
+                    .catch(err => res.send(err))
+            })
         })
+
     }
     static getShowUser(req, res) {
         let _id = +req.params.id
-        dbConnection((err, client, db) => {
-            if (err) res.redirect('/error')
-            db.collection('users').findOne({ _id }).then(data => {
-                client.close()
-                let noTrans = false
-                let sum = 0
-                data.transactions.forEach(val => {
-                    if (val.type == 'add') sum += +val.value
-                    else sum -= +val.value
-                })
-                if (data.transactions.length == 0) noTrans = true
-                res.render('single', { pageTitle: 'Show User', data, noTrans, sum })
+        getUserById(_id).then(data => {
+            let noTrans = false
+            let sum = 0
+            data.transactions.forEach(val => {
+                if (val.type == 'add') sum += +val.value
+                else sum -= +val.value
             })
+            if (data.transactions.length == 0) noTrans = true
+            res.render('single', { pageTitle: 'Show User', data, noTrans, sum })
         })
     }
 
@@ -102,19 +142,34 @@ class User {
 
     static postAddTrans(req, res) {
         let _id = +req.params.id
-        let trans = req.body
+        if (req.body.type == 'add') { var add = true }
+        else { var withdraw = true }
+        let errors = {};
+        if (Check.checkTransValue(req)) errors.trans = { withdraw, add, val: req.body.value, err: Check.checkTransValue(req) }
+        console.log(errors);
+        if (Object.keys(errors).length != 0)
+            return res.render('addWithDraw', { pageTitle: 'Add transaction', errors })
+
         dbConnection((err, client, db) => {
-            if (err) res.redirect('/error');
-            db.collection('users').findOne({ _id }).then(user => {
-                user.transactions.push({ tranNum: Date.now(), ...trans })
-                return user.transactions
-            }).then(transactions => {
-                db.collection('users').updateOne({ _id }, { $set: { transactions } }).then(_ => {
+            db.collection('users').updateOne({ _id }, { $push: { 'transactions': { tranNum: Date.now(), ...req.body } } })
+                .then(_ => {
                     res.redirect(`/user/${_id}`)
                     client.close()
-                }).catch(err => res.send(err))
-            }).catch(err => res.send(err))
+                })
+                .catch(err => res.send(err))
         })
+        // dbConnection((err, client, db) => {
+        //     if (err) res.redirect('/error');
+        //     db.collection('users').findOne({ _id }).then(user => {
+        //         user.transactions.push({ tranNum: Date.now(), ...trans })
+        //         return user.transactions
+        //     }).then(transactions => {
+        //         db.collection('users').updateOne({ _id }, { $set: { transactions } }).then(_ => {
+        //             res.redirect(`/user/${_id}`)
+        //             client.close()
+        //         }).catch(err => res.send(err))
+        //     }).catch(err => res.send(err))
+        // })
 
     }
 
@@ -138,9 +193,9 @@ class User {
                     let trans = user.transactions.find(trans => trans.tranNum == tranNum)
                     return trans
                 }).then(transaction => {
-                    let add = true
-                    if (transaction.type == 'withDraw') add = false
-                    res.render('editTrans', { pageTitle: 'Edit Trans', transaction, add })
+                    if (transaction.type == 'add') { var add = true }
+                    else { var withdraw = true }
+                    res.render('editTrans', { pageTitle: 'Edit Trans', transaction: transaction.value, add, withdraw })
                 })
                 .catch(err => res.send(err))
         })
@@ -148,7 +203,17 @@ class User {
 
     static postEditTrans(req, res) {
         let _id = +req.params.id;
+        let transaction = req.body.value
         let tranNum = +req.params.tranNum;
+        if (req.body.type == 'add') { var add = true }
+        else { var withdraw = true }
+        let errors = {}
+        if (Check.checkTransValue(req)) errors.trns = {
+            val: req.body.value == '' ? ' ' : req.body.value, err: Check.checkTransValue(req)
+        }
+        if (Object.keys(errors).length !== 0)
+            return res.render('editTrans', { pageTitle: 'Edit Trans', transaction, add, withdraw, errors })
+
         dbConnection((err, client, db) => {
             if (err) res.redirect('/error')
             db.collection('users').updateOne({ _id, 'transactions.tranNum': tranNum }, {
@@ -161,6 +226,9 @@ class User {
                 client.close()
             }).catch(err => res.send(err))
         })
+
+
+
     }
 
     static getDeleteTrans(req, res) {

@@ -7,15 +7,23 @@
     <form method="post">
         <div class="my-3">
             <div> Selet Transaction Type : </div>
-            <input type="radio" name="type" id="add" value='add'>
+            <input type="radio" name="type" id="add" value='add' {{#if errors.trans.add}}checked {{/if}} required>
             <label for='add'>add</label>
-            <input type="radio" name="type" id="withDraw" value='withDraw'>
+            <input type="radio" name="type" id="withDraw" value='withDraw' {{#if errors.trans.withdraw}}checked {{/if}} required>
             <label for='withDraw'>withDraw</label>
         </div>
         <div class="my-3 ">
             <label>Enater the value : </label>
-            <input type="number" name="value" class='form-control w-50'>
+            <input type="number" name="value" class='form-control w-50 {{#if errors.trans.err}}border-danger{{/if}}' 
+            value='{{#if errors.trans.val}}{{errors.trans.val}}{{else}}''{{/if}}'>
         </div>
+        {{#if errors.trans.err}}
+        <div>
+            <p class="text-danger">
+                {{errors.trans.err}}
+            </p>
+        </div>
+        {{/if}}
         <div class="my-3">
             <input class='btn btn-outline-dark' type="submit" value="add transaction">
         </div>

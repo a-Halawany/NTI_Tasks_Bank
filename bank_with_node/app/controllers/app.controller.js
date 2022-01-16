@@ -60,7 +60,6 @@ class User {
         if (check.checkinitalBalance(req)) errors.initalBalance = check.checkinitalBalance(req)
 
         if (Object.keys(errors).length != 0) {
-            console.log(errors)
             res.render('addUser', { pageTitle: 'add', addUser: true, userData: req.body, errors })
         } else {
             let data = getDataFromJSON()
@@ -95,16 +94,14 @@ class User {
         if (check.checkAddress(req)) errors.Address = check.checkAddress(req)
         if (check.checkPhone(req)) errors.phone = check.checkPhone(req)
 
-        if (Object.keys(errors).length != 0) {
-            console.log(errors)
-            res.render(`editUser`, { pageTitle: 'Edit User', data: d.data[d.index], userData: req.body, errors })
-        } else {
-            userHeadr.forEach(el => {
-                d.data[d.index][el] = req.body[el]
-            })
-            writeDataToJSON(d.data)
-            res.redirect(`/`)
-        }
+        if (Object.keys(errors).length != 0)
+            return res.render(`editUser`, { pageTitle: 'Edit User', data: d.data[d.index], userData: req.body, errors })
+        userHeadr.forEach(el => {
+            d.data[d.index][el] = req.body[el]
+        })
+        writeDataToJSON(d.data)
+        res.redirect(`/`)
+
 
 
     }
@@ -115,9 +112,13 @@ class User {
 
     static postAddTrans(req, res) {
         let d = getSomeData(req)
+        let errors = {};
+        if (check.checkTransValue(req)) errors.trans = { value: req.body.value, err: check.checkTransValue(req) }
+        if (Object.keys(errors).length != 0)
+            return res.render('addWithDraw', { pageTitle: 'Add transaction', errors })
         d.data[d.index].transactions.push({ tranNum: Date.now(), ...req.body })
         writeDataToJSON(d.data)
-        res.redirect('/')
+        res.redirect(`/user/${d.id}`)
     }
 
     static getShowSingle(req, res) {
@@ -147,6 +148,11 @@ class User {
 
     static postEditTrans(req, res) {
         let d = getSomeData(req, 'trans')
+        let errors = {}
+        let add = d.trans.type == 'add' ? true : false
+        if (check.checkTransValue(req)) errors.trns = { val: req.body.value == '' ? ' ' : req.body.value, err: check.checkTransValue(req) }
+        if (Object.keys(errors).length !== 0)
+            return res.render('editTrans', { pageTitle: "Edit Transaction", transaction: d.trans, add, errors })
         d.data[d.index].transactions[d.transIndex].type = req.body.type
         d.data[d.index].transactions[d.transIndex].value = req.body.value
         writeDataToJSON(d.data)
